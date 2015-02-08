@@ -1,9 +1,10 @@
-
+/**
+ * Created by droydi on 06/02/15.
+ */
 public class Runner {
 
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-		Calculations z = new Calculations();
-	}
+    public static void main(String[] args) {
 
+        new GUI();
+    }
 }
