@@ -1,9 +1,23 @@
-import javax.swing.*;
-import java.awt.*;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.*;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
+
+import javax.swing.DefaultListModel;
+import javax.swing.JButton;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JList;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JTextField;
+import javax.swing.WindowConstants;
 
 /**
  * Created by droydi on 06/02/15.
@@ -28,6 +42,7 @@ public class GUI extends JFrame implements ActionListener {
     Inputs input = new Inputs();
     double URMS;
     double UsAC;
+    double Umin; 												//Lowest voltage for the design
     double Iload;
     double f = input.getF();
     double diode = input.getDiode();
@@ -95,11 +110,13 @@ public class GUI extends JFrame implements ActionListener {
         JTextField field1 = new JTextField();
         JTextField field2 = new JTextField();
         JTextField field3 = new JTextField();
+        JTextField field4 = new JTextField();							//Added 10.02.15 Jordbru
 
         Object[] objectInput = {
-                "Urms", field1,
-                "UsAC", field2,
-                "I-load", field3
+                "Mains voltage (rms)", field1,
+                "Secondary voltage (rms)", field2,
+                "Max load (Amps)", field3,
+                "Minimum design voltage", field4						//Added 10.02.15 Jordbru
         };
 
         JOptionPane.showConfirmDialog(null, objectInput, "Input fields to calculate.", JOptionPane.OK_CANCEL_OPTION);
@@ -107,12 +124,14 @@ public class GUI extends JFrame implements ActionListener {
         input.setURMS(Double.parseDouble(field1.getText()));
         input.setUsAC(Double.parseDouble(field2.getText()));
         input.setIload(Double.parseDouble(field3.getText()));
+        input.setUmin(Double.parseDouble(field4.getText()));	     	//Added 10.02.15 Jordbru
 
         setStatic();
 
         URMS = input.getURMS();
         UsAC = input.getUsAC();
         Iload = input.getIload();
+        Umin = input.getUmin();
         diode = input.getDiode();
         f = input.getF();
     }
@@ -145,12 +164,13 @@ public class GUI extends JFrame implements ActionListener {
     public void nominellCalc(){
         double AUsAC						= (UsAC*(Math.sqrt(2)));
         double Umax							= AUsAC-(2*diode);
-        double Ur							= Umax-UsAC;
+        double Ur							= Umax-Umin;				//Changed 10.02.15 Jordbru		
         double C							= Iload/(2*f*Ur);
 
         al.add("Nominell: \n");
-        al.add("Voltage inn: " + UsAC +"V\n");
-        al.add("Amplitude voltage: " + AUsAC +"V\n");
+        al.add("Voltage inn: " + UsAC +"V"+"AC\n");
+        al.add("Minimum design voltage: " + Umin);						//Added 10.02.15 Jordbru
+        al.add("Amplitude voltage: " + AUsAC +"V\n");					
         al.add("Voltage after diodes: " + Umax + "V\n");
         al.add("Frequency: " + f+"Hz\n");
         al.add("Rippel: " + Ur +"V\n");
@@ -165,11 +185,12 @@ public class GUI extends JFrame implements ActionListener {
         double W1UsAC 						= UsAC*0.9;
         double W1AUsAC						= (W1UsAC*(Math.sqrt(2)));
         double W1Umax						= W1AUsAC-(2*diode);
-        double W1Ur							= W1Umax-W1UsAC;
+        double W1Ur							= W1Umax-Umin;				//Changed 10.02.15 Jordbru	
         double W1C							= Iload/(2*f*W1Ur);
 
         al.add("Worstcase: -10% on inn voltage\n");
-        al.add("Voltage inn: " + W1UsAC +"V\n");
+        al.add("Voltage inn: " + W1UsAC +"V" +"AC\n");					//Changed 10.02.15 Jordbru
+        al.add("Minimum design voltage: " + Umin);						//Added 10.02.15 Jordbru
         al.add("Amplitude voltage: " + W1AUsAC +"V\n" );
         al.add("Voltage after diodes: " + W1Umax + "V\n");
         al.add("Frequency: " + f +"Hz\n");
@@ -185,11 +206,12 @@ public class GUI extends JFrame implements ActionListener {
         double W2UsAC 						= UsAC*1.1;
         double W2AUsAC						= (W2UsAC*(Math.sqrt(2)));
         double W2Umax						= W2AUsAC-(2*0.7);
-        double W2Ur							= W2Umax-W2UsAC;
+        double W2Ur							= W2Umax-Umin;				//Changed 10.02.15 Jordbru	
         double W2C							= Iload/(2*f*W2Ur);
 
         al.add("Worstcase: +10% on inn voltage\n");
-        al.add("Voltage inn: " + W2UsAC +"V\n");
+        al.add("Voltage inn: " + W2UsAC +"V"+"AC\n");					//Changed 10.02.15 Jordbru
+        al.add("Minimum design voltage: " + Umin);						//Added 10.02.15 Jordbru
         al.add("Amplitude voltage: " + W2AUsAC +"V\n" );
         al.add("Voltage after diodes: " + W2Umax + "V\n");
         al.add("Frequency: " + f +"Hz\n");

@@ -4,6 +4,7 @@
 public class Inputs {
     public double URMS;			//Main voltage on transformer
     public double UsAC;			//Secondary voltage
+    public double Umin;			//Lowest design voltage added 10.02 Jordbru
     public double Iload;		//Max load for power the power supply
     public double f	= 50;		//Frequency
     public double diode	= 0.7;	//Diodeloss
@@ -25,7 +26,15 @@ public class Inputs {
         UsAC = usAC;
     }
 
-    public double getIload() {
+    public double getUmin() {
+		return Umin;
+	}
+
+	public void setUmin(double umin) {
+		Umin = umin;
+	}
+
+	public double getIload() {
         return Iload;
     }
 
@@ -51,8 +60,8 @@ public class Inputs {
 
     @Override
     public String toString() {
-        return  "URMS: " + URMS +
-                ", UsAC: " + UsAC +
-                ", I-load: " + Iload;
+        return  "Mains voltage: " + URMS +
+                ", Secondary voltage: " + UsAC +
+                ", Max load (Amps): " + Iload;
     }
 }
